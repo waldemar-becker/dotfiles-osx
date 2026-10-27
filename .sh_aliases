@@ -1,0 +1,7 @@
+# Shared shell aliases (bash + zsh)
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+alias ll='lsd -lah'
+alias tree='lsd --tree'

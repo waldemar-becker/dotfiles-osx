@@ -1,41 +1,45 @@
 #!/usr/bin/env bash
+# Bootstrap a fresh macOS (Apple Silicon) with my tools.
+set -euo pipefail
 
-echo "Installing cmd line tools for xcode:"
-xcode-select --install
+echo "Installing Xcode command line tools:"
+xcode-select --install || true
 
-echo "Installing homebrew:"
+echo "Installing Homebrew:"
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
-echo "Installing OSS utilities:"
+echo "Installing CLI utilities:"
 brew install \
   bash-completion \
   bat \
-  exa \
+  colordiff \
   git \
+  go-task \
   k9s \
-  libzip \
-  python@3.9 \
-  the_silver_searcher \
+  lsd \
+  nmap \
+  ollama \
+  pyenv \
+  ripgrep \
   tldr \
   tree \
-  font-hack-nerd-font \
-  postman
+  font-hack-nerd-font
 
-# Install apps with UI
+echo "Installing GUI apps:"
 brew install --cask \
-  rectangle \
-  iterm2 \
   firefox \
-  google-chrome \
-  macpass \
-  spotify \
-  pycharm \
-  atom
+  iterm2 \
+  postman \
+  rectangle \
+  cursor
 
-# Install pip package manager
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python get-pip.py
-rm get-pip.py
+echo "Installing latest Python via pyenv:"
+eval "$(pyenv init -)"  # activate shims so pip/python resolve to pyenv
+latest_python="$(pyenv install --list | grep -E '^\s*3\.[0-9]+\.[0-9]+$' | tail -1 | tr -d ' ')"
+pyenv install -s "$latest_python"
+pyenv global "$latest_python"
+pyenv rehash
 
-# Install useful python packages
+echo "Installing Python packages:"
 pip install -r requirements.txt
